@@ -8,7 +8,7 @@ import {db} from '../src/storage';
 import {App} from '../src/main';
 beforeEach(async()=>{localStorage.clear();sessionStorage.clear();window.history.replaceState(null,'','/#Assistant');Object.defineProperty(navigator,'onLine',{configurable:true,value:false});await db.preferences.put({id:'ui-test-owner:onboarding',value:{currency:'EGP'}});});
 afterEach(async()=>{cleanup();vi.unstubAllGlobals();await db.records.clear();await db.queue.clear();await db.preferences.clear();});
-async function start(){render(<App/>);await screen.findByRole('heading',{name:/^Assistant$/});fireEvent.click(screen.getByRole('checkbox'));fireEvent.click(screen.getByRole('button',{name:'Analyze my finances'}));}
+async function start(){render(<App/>);await screen.findByRole('heading',{name:/^Assistant$/});fireEvent.click(screen.getByRole('checkbox',{name:/aggregate financial totals/}));fireEvent.click(screen.getByRole('button',{name:'Analyze my finances'}));}
 it('shows pending feedback and cancel, then preserves deterministic report on cancellation',async()=>{
  vi.stubGlobal('fetch',vi.fn((_url:unknown,options:RequestInit)=>new Promise((_resolve,reject)=>{if(options.signal?.aborted)reject(new DOMException('Canceled','AbortError'));else options.signal?.addEventListener('abort',()=>reject(new DOMException('Canceled','AbortError')));})));
  await start();await screen.findByText('Preparing your explanation. Please wait…');expect((screen.getByRole('button',{name:'Analyzing…'}) as HTMLButtonElement).disabled).toBe(true);
