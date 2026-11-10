@@ -5,9 +5,9 @@ Specification: https://app.notion.com/p/413edc0cac2381328d6ec43d3c8c1737
 
 ## Current state
 
-Specification read in full. Repository now exists: https://github.com/carlospeter582011-prog/SmartSpend (public, created by owner). Remote main was inspected: only `README.md` containing `# SmartSpend`, initial commit `9dafed0ba0a6b5cee37958b3e02755ea7af43400`. No existing implementation to preserve. 45 source files uploaded through the GitHub connector in commit `c548d90236243d9c6851e9dd2b6de5999a153916`. Remote tree verified. NOT deployed.
+Specification read in full. Repository now exists: https://github.com/carlospeter582011-prog/SmartSpend (public, created by owner). Remote main was inspected: only `README.md` containing `# SmartSpend`, initial commit `9dafed0ba0a6b5cee37958b3e02755ea7af43400`. No existing implementation to preserve. 45 source files uploaded through the GitHub connector in commit `c548d90236243d9c6851e9dd2b6de5999a153916`. Remote tree verified. First Vercel deployment is READY at https://smartspend-gamma.vercel.app . Cloud authentication/sync remain unconfigured.
 
-Phase 0 repository inspection is verified. Phase 1 live infrastructure remains blocked by missing Supabase/Vercel environment configuration. Later code is implemented without representing it as verified complete.
+Phase 0 repository inspection is verified. Phase 1 live integration remains blocked by missing Supabase configuration. Vercel access and first deployment are now resolved. Later code is implemented without representing it as verified complete.
 
 ## Implemented source
 
@@ -72,6 +72,20 @@ GitHub Actions run **42824099753** on implementation commit **78025b767af8e809c9
 
 Source integrity check matched all 45 uploaded files to remote Git blob SHA values before adding the PostgreSQL fixture. Browser bundle check found no server-only secret variable references, and secret example values are empty.
 
-Current phase: Phase 0 foundation complete; Phase 1 source and isolated SQL verification implemented, but live Supabase Auth/PostgREST, auth recovery/session behavior, family interactions and multi-device synchronization NOT verified. No Vercel deployment exists. Team authorization returned 403 and remains an external requirement. Supabase project/configuration and optional server-side Google key are still required. Never ask for secret values in chat. Remaining independent implementation gaps above are not waived by passing CI.
+Current phase: Phase 0 foundation complete; Phase 1 source and isolated SQL verification implemented, but live Supabase Auth/PostgREST, auth recovery/session behavior, family interactions and multi-device synchronization NOT verified. Vercel authorization now works and first deployment is READY; the earlier 403 blocker is resolved. Supabase project/configuration and optional server-side Google key are still required. Never ask for secret values in chat. Remaining independent implementation gaps above are not waived by passing CI.
 
 Next concrete action: owner approves the Vercel team-access consent link; then inspect/create the intended SmartSpend Vercel project and configure live Supabase via secure environment settings. Continue real deployment/auth/sync tests before claiming completion. This documentation-only handoff update does not alter the verified application code.
+
+## Latest deployment milestone — Vercel access resolved
+
+Owner requested a retry. Team access now succeeds. Created project `prj_96BkzH9YTFq9GQ4EwHnUdEtXNRbd` (smartspend) under `team_LkHqHcxkcj9dEqxWDwwlAvAq`, linked to the GitHub repository, and pinned Node.js 24.x in project settings.
+
+Deployment `dpl_HxSjScPjxkZbgQNg6ePZfmcwwoEv` from source commit `4b21ea979aa34917bf72669c3a4043fb0e084919` reached **READY**. Vercel assigned target **production** for this first deployment (although initially described as a preview in progress commentary). This is a published development build, not a completed financial service.
+
+Live URL: https://smartspend-gamma.vercel.app
+
+Verification: authenticated Vercel fetch returned HTTP 200 with the expected SmartSpend HTML and security headers. Shared cloud browser opened the live page, observed the cloud-setup-pending login state, clicked Explore demo workspace, and displayed the working dashboard with fictional balances, charts, recent transactions and bills. Full live auth/family/sync/AI tests were NOT run. No secrets or real user financial data were added. Existing Vercel deployment protection settings were preserved.
+
+Current external requirement: create/configure the intended Supabase project, apply migrations 001–004, bind public client config and server-only keys in Vercel securely, configure exact APP_ORIGIN plus Supabase redirect/email settings, and redeploy before testing signup/login/recovery, sync and family permissions. Optional Google key/quota review is required to enable AI. Do not paste secrets in chat. See .env.example for variable names only.
+
+Next action: obtain the Supabase project URL/reference (non-secret) and have the owner enter secret values directly in Vercel project environment settings; continue live integration verification. The Vercel permission problem no longer blocks work.
