@@ -30,8 +30,8 @@ Exact source inventory: package.json/package-lock.json, tsconfig.json, vite.conf
 - PWA PNG dimensions 192/512/512 and manifest maskable declaration passed asset tests.
 - Playwright attempted at all eight requested widths. **Browser launch blocked before page checks**, Linux `socket() failed: Operation not permitted`; no viewport results/screenshots were obtained. Vite needed loopback host because 0.0.0.0 network interface enumeration failed in this runtime.
 - Shared cloud browser fallback attempted localhost preview; ERR_CONNECTION_REFUSED. This local limitation remains, but remote GitHub Actions subsequently ran the browser successfully. See current remote evidence below; offline shell/installability are not yet verified.
-- Supabase permission SQL fixture is provided but NOT RUN. No Supabase URL, keys, project connection or test accounts were supplied.
-- GitHub Actions initial run 42822463127: install, typecheck, lint, 24 unit tests and build passed. Browser E2E: eight viewport tests and keyboard/zoom passed (9/10 total); offline reload failed. Screenshots were downloaded and inspected. Fixed Vary-aware public asset cache lookups, made worker-control readiness explicit, disabled chart animation for stable rendering and applied compact currency formatting to prevent digit splitting. Replacement run required. Vercel remains undeployed: team authorization returned 403; a team-access consent link was supplied to the owner.
+- SQL permission fixture PASSED in isolated PostgreSQL 16 CI. No live Supabase URL, keys, project connection or test accounts were supplied, so actual Supabase integration is not verified.
+- GitHub Actions initial run 42822463127: install, typecheck, lint, 24 unit tests and build passed. Browser E2E: eight viewport tests and keyboard/zoom passed (9/10 total); offline reload failed. Screenshots were downloaded and inspected. Fixed Vary-aware public asset cache lookups, made worker-control readiness explicit, disabled chart animation for stable rendering and applied compact currency formatting to prevent digit splitting. Replacement run 42823730084 passed all 10 browser tests, including offline reload and all eight widths. Updated mobile screenshot visually inspected: charts render and currency values no longer split digits. Vercel remains undeployed: team authorization returned 403; a team-access consent link was supplied to the owner.
 - Gemini: official model listing + structured output inspected; no key, free-tier eligibility/quota or real generation verified. Gateway disabled by default.
 
 ## Blockers and exact requirements
@@ -40,7 +40,7 @@ Exact source inventory: package.json/package-lock.json, tsconfig.json, vite.conf
 2. Supabase project and environment bindings required: public URL/anon configuration plus server-only service-role key in Vercel. Apply migration using phone SQL editor, run isolated permission fixtures and multi-account tests. Never request secrets in chat.
 3. Vercel project connected to repository; exact APP_ORIGIN, Auth redirect URLs, email delivery configured. Deployment verification requires actual URL and authenticated tests.
 4. Optional Gemini key in server environment, provider quota/tier review, official documented adapter smoke test; no free quota assumed.
-5. Browser E2E needs runner allowed to launch Chromium (e.g. GitHub Actions), then resolve observed failures, not merely rerun unmodified tests and assume success.
+5. Browser execution is resolved through GitHub Actions. Keep live Supabase/auth/multi-device checks separate from passing local-demo E2E.
 
 ## Open implementation work (independent of credentials)
 
@@ -56,7 +56,7 @@ Exact source inventory: package.json/package-lock.json, tsconfig.json, vite.conf
 
 ## Next actions in order
 
-Local asset/schema tests passed. Update this handoff only when results or blockers change. Initial source is uploaded. Verify the offline cache fix on GitHub Actions, then update this file with the actual result. Then live database/auth permissions and deployment verification before checking Phase 1 tasks. Work through all remaining Notion phases with evidence; no complete-project declaration until real deployed flows pass.
+Local asset/schema tests passed. Update this handoff only when results or blockers change. Initial source is uploaded. Offline cache fix passed on GitHub Actions. Verify the latest run 42824099753, then obtain Vercel team authorization and configure live Supabase before checking Phase 1 complete. Then live database/auth permissions and deployment verification before checking Phase 1 tasks. Work through all remaining Notion phases with evidence; no complete-project declaration until real deployed flows pass.
 
 ## Notion synchronization
 
@@ -64,4 +64,14 @@ Three verified foundation tasks checked in place: official AI documentation/fall
 
 ## Database verification expansion
 
-Added an isolated PostgreSQL 16 CI job and minimal auth.uid/role fixture (`supabase/tests/bootstrap.sql`). This fixture must NEVER run in an existing Supabase project. Expanded SQL tests cover domain-view RLS, owner-only private rows, explicitly shared snapshots, stale-write conflict/idempotent replay, expired/revoked/single-use invites, child privilege escalation, direct mutation bypass and anonymous quota access. Execution is pending in the next CI run; no database success claimed yet.
+Added an isolated PostgreSQL 16 CI job and minimal auth.uid/role fixture (`supabase/tests/bootstrap.sql`). This fixture must NEVER run in an existing Supabase project. Expanded SQL tests cover domain-view RLS, owner-only private rows, explicitly shared snapshots, stale-write conflict/idempotent replay, expired/revoked/single-use invites, child privilege escalation, direct mutation bypass and anonymous quota access. Database job 129856708757 in run 42824099753 PASSED: all four migrations executed and expanded SQL permission fixture completed successfully. These tests validate PostgreSQL policies/functions, not live Supabase Auth/PostgREST integrations.
+
+## Latest verified milestone
+
+GitHub Actions run **42824099753** on implementation commit **78025b767af8e809c999a8aa227cda9a2cf56c52** completed successfully: BOTH `verify` and `database` jobs are green. The verification job passed npm ci, TypeScript, ESLint, 24 unit tests, production build, and all 10 Chromium E2E tests. Database job applied all four migrations and passed the expanded SQL permission cases. Browser evidence: https://github.com/carlospeter582011-prog/SmartSpend/actions/runs/42824099753 . Updated screenshots on the preceding identical frontend commit were downloaded and visually inspected.
+
+Source integrity check matched all 45 uploaded files to remote Git blob SHA values before adding the PostgreSQL fixture. Browser bundle check found no server-only secret variable references, and secret example values are empty.
+
+Current phase: Phase 0 foundation complete; Phase 1 source and isolated SQL verification implemented, but live Supabase Auth/PostgREST, auth recovery/session behavior, family interactions and multi-device synchronization NOT verified. No Vercel deployment exists. Team authorization returned 403 and remains an external requirement. Supabase project/configuration and optional server-side Google key are still required. Never ask for secret values in chat. Remaining independent implementation gaps above are not waived by passing CI.
+
+Next concrete action: owner approves the Vercel team-access consent link; then inspect/create the intended SmartSpend Vercel project and configure live Supabase via secure environment settings. Continue real deployment/auth/sync tests before claiming completion. This documentation-only handoff update does not alter the verified application code.
