@@ -1,6 +1,6 @@
 import type {VercelRequest,VercelResponse} from '@vercel/node';
-import {admin} from './_server';
-import {configuredKeys,configuredModels} from '../src/ai';
+import {admin} from './_server.js';
+import {configuredKeys,configuredModels} from '../src/ai.js';
 // No credentials, user rows or financial values are returned by this readiness probe.
 export default async function handler(req:VercelRequest,res:VercelResponse){
  res.setHeader('Cache-Control','no-store');
