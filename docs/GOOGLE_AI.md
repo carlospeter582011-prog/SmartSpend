@@ -20,4 +20,10 @@ Still required before release: verify the actual project's free-tier eligibility
 
 Provider 429 maps to a sanitized 429 with Retry-After (provider value when exposed by SDK, otherwise 60-second minimum retry guidance). A shared server-side cooldown is saved in rate_buckets. App daily limits return a wait until the next UTC allowance boundary. The UI disables repeated requests during the cooldown, displays pending feedback/elapsed time and cancellation, and retains its deterministic report. Client timeout: 40 seconds. Cancellation stops browser waiting; it cannot guarantee cancellation of provider work already in flight.
 
-`GET /api/status` performs a head-only profiles query to check server Supabase credentials. It returns readiness booleans, public model names and key count, never key values, tokens, user rows or financial data. This is a configuration check, not full Auth or sync verification.
+`GET /api/status` performs a head-only server-only rate_buckets query to check server Supabase credentials. It returns readiness booleans, public model names and key count, never key values, tokens, user rows or financial data. This is a configuration check, not full Auth or sync verification.
+
+## Production verification — 2026-11-10
+
+Owner authorized activation with existing secret GEMINI_API_KEYS. AI_ENABLED=true is live. A one-release optional build check (AI_VERIFY_ON_BUILD=true) used synthetic nonfinancial text and normalized JSON output for each of three keys. All three succeeded via gemini-3.5-flash-lite after bounded fallback; no successful gemini-3.8-flash result is asserted. Only key position/model/status were logged. The check flag was reset to false afterward to avoid repeat calls. Production status returns enabled=true, keyCount=3, configurationValid=true; no key values were retrieved.
+
+Rechecked official model/API documentation: https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash , https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash-lite , https://ai.google.dev/gemini-api/docs/get-started . Provider connectivity is now verified; user-authenticated finance requests and full household AI integration still need live account verification.
