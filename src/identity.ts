@@ -1,0 +1,2 @@
+export function normalizeUsername(value:unknown){const username=String(value??'').trim();if(!/^[A-Za-z0-9_]{3,30}$/.test(username))throw Error('Username must be 3–30 letters, numbers or underscores.');return username;}
+export function normalizeRealName(value:unknown){const name=String(value??'').trim().replace(/\s+/g,' ');if(name.length<2||name.length>100||/\p{Cc}/u.test(name))throw Error('Enter your real name using 2–100 characters.');return name;}

@@ -2,8 +2,8 @@
 -- CI runs against isolated PostgreSQL role/auth fixtures; live Supabase Auth remains separate.
 begin;
 insert into auth.users(id,email,raw_user_meta_data) values
- ('11111111-1111-4111-8111-111111111111','adult-a@example.invalid','{"username":"test_adult_a"}'),
- ('22222222-2222-4222-8222-222222222222','child-b@example.invalid','{"username":"test_child_b"}');
+ ('11111111-1111-4111-8111-111111111111','adult-a@example.invalid','{"username":"test_adult_a","real_name":"Fixture Adult"}'),
+ ('22222222-2222-4222-8222-222222222222','child-b@example.invalid','{"username":"test_child_b","real_name":"Fixture Child"}');
 set local role authenticated;
 select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
 select set_config('test.household',public.create_household('Permission test')::text,true);
