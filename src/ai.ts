@@ -16,4 +16,4 @@ export function configuredKeys(raw?:string,legacy?:string){
  if(keys.length>8||keys.some(k=>k.length>512||/\s/.test(k)))throw Error('Invalid AI key configuration');return keys;
 }
 export function selectKey(keys:string[],index:number){if(!keys.length||!Number.isSafeInteger(index)||index<0)throw Error('AI key unavailable');return keys[index%keys.length];}
-export async function modelFallback<T>(models:string[],invoke:(m:string)=>Promise<T>):Promise<T>{let last:unknown;for(const model of models.slice(0,2)){try{return await invoke(model);}catch(e){last=e;const status=Number((e as {status?:number}).status);if(status===429||status===401||status===403)throw e;if(status&&status<500&&status!==404)throw e;}}throw last??Error('AI unavailable');}
+export async function modelFallback<T>(models:string[],invoke:(m:string)=>Promise<T>):Promise<T>{let last:unknown;for(const model of models.slice(0,2)){try{return await invoke(model);}catch(e){last=e;const status=Number((e as {status?:number}).status);if(status===429||status===401||status===403)throw e;if(status&&status<500&&status!==404&&status!==408)throw e;}}throw last??Error('AI unavailable');}
