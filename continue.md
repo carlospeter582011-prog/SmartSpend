@@ -1,3 +1,11 @@
+# Current verified status — 2026-11-10
+
+Production: https://smartspend-save.vercel.app . Current implementation commit 1007330dad33da11e2864bb1bf9244e35efb9f33. Vercel production deployment dpl_29JSLJV4gRSvChWQ8z81qYLpprFD is READY. Live GET /api/status returned HTTP 200: database ready, AI disabled, keyCount 0, default models gemini-3.8-flash and gemini-3.5-flash-lite. Probe uses HEAD against server-only rate_buckets, validating the configured backend key can access the required table without returning rows. This does not verify Auth redirects, sessions, family UI or multi-device sync.
+
+Latest CI: https://github.com/carlospeter582011-prog/SmartSpend/actions/runs/42841955814 — verify and database PASSED, including 36 unit/component tests, emitted Node ESM import smoke test for all four API handlers, production build, 10 browser tests covering mobile portrait/desktop landscape/RTL/offline, migrations and permissions. Initial live probe exposed extensionless ESM imports; fixed all API imports with .js and added the actual emitted-handler smoke test to CI. Local typecheck, lint, 36 tests, API smoke test and build also passed. Large client bundle warning remains.
+
+Owner actions still required: configure Supabase Auth Site URL https://smartspend-save.vercel.app and allowed redirects https://smartspend-save.vercel.app/ plus https://smartspend-save.vercel.app/?recovery=1 in Dashboard. Supabase connector cannot inspect/change these settings. Add Google keys privately in Vercel Production as Sensitive GEMINI_API_KEYS, recommended JSON array; no keys in chat or source. After credentials exist, test actual Google generation before enabling AI_ENABLED=true. Current key count is zero; live AI generation and fallback remain unverified. Remaining application scope and end-to-end Auth/sync/family checks below are still open. Historical entries below describe earlier states; this section supersedes outdated domain, missing Supabase project and no-deployment statements.
+
 # SmartSpend — canonical implementation handoff
 
 Date: 2026-11-10 (Africa/Cairo). Version 0.1.0, build 001.
