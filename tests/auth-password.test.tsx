@@ -1,0 +1,11 @@
+// @vitest-environment jsdom
+import React from 'react';
+import {it,expect,vi,afterEach} from 'vitest';
+import {render,screen,fireEvent,cleanup,waitFor} from '@testing-library/react';
+const {signUp}=vi.hoisted(()=>({signUp:vi.fn(async()=>({error:null}))}));
+vi.mock('../src/client',()=>({configured:true,supabase:{auth:{signUp}}}));
+import {Auth} from '../src/main';
+afterEach(()=>{cleanup();signUp.mockClear();});
+function signup(){const error=vi.fn();render(<Auth onDemo={()=>{}} onError={error} notice=""/>);fireEvent.click(screen.getByRole('button',{name:'New here? Create an account'}));fireEvent.change(screen.getByLabelText('Username',{exact:true}),{target:{value:'fixture_user'}});fireEvent.change(screen.getByLabelText('Email',{exact:true}),{target:{value:'fixture@example.invalid'}});return error;}
+it('submits a matching eight-character signup password to Auth',async()=>{signup();fireEvent.change(screen.getByLabelText('Password',{exact:true}),{target:{value:'example8'}});fireEvent.change(screen.getByLabelText('Confirm password'),{target:{value:'example8'}});fireEvent.submit(screen.getByRole('button',{name:'Create account'}).closest('form')!);await waitFor(()=>expect(signUp).toHaveBeenCalledTimes(1));expect(signUp).toHaveBeenCalledWith(expect.objectContaining({password:'example8'}));});
+it('blocks mismatch and short passwords before sending any Auth request',async()=>{const error=signup();const password=screen.getByLabelText('Password',{exact:true});const confirm=screen.getByLabelText('Confirm password');fireEvent.change(password,{target:{value:'example8'}});fireEvent.change(confirm,{target:{value:'different'}});fireEvent.submit(screen.getByRole('button',{name:'Create account'}).closest('form')!);await waitFor(()=>expect(error).toHaveBeenCalledWith('Passwords do not match.'));expect(signUp).not.toHaveBeenCalled();fireEvent.change(password,{target:{value:'short'}});fireEvent.change(confirm,{target:{value:'short'}});fireEvent.submit(screen.getByRole('button',{name:'Create account'}).closest('form')!);await waitFor(()=>expect(error).toHaveBeenCalledWith('Use at least 8 characters for your password.'));expect(signUp).not.toHaveBeenCalled();});
