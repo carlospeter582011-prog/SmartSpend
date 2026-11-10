@@ -53,3 +53,9 @@ jobs:
           done
       - name: Verify ownership, child privacy, invite replay and authorization
         run: psql -v ON_ERROR_STOP=1 -f supabase/tests/permissions.sql
+      - name: Verify combined phone setup on a second empty database
+        run: |
+          createdb smartspend_setup_test
+          sed '/^create role /d' supabase/tests/bootstrap.sql | PGDATABASE=smartspend_setup_test psql -v ON_ERROR_STOP=1
+          PGDATABASE=smartspend_setup_test psql -v ON_ERROR_STOP=1 -f supabase/setup.sql
+          PGDATABASE=smartspend_setup_test psql -v ON_ERROR_STOP=1 -f supabase/tests/permissions.sql
