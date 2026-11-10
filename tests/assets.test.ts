@@ -1,0 +1,3 @@
+import {it,expect} from 'vitest';
+import {readFileSync,existsSync} from 'node:fs';
+it('provides valid PWA icon sizes and safe maskable padding',()=>{for(const [name,size] of [['icon-192.png',192],['icon-512.png',512],['icon-maskable.png',512]] as const){const png=readFileSync(`public/${name}`);expect(png.subarray(1,4).toString()).toBe('PNG');expect(png.readUInt32BE(16)).toBe(size);expect(png.readUInt32BE(20)).toBe(size);}const manifest=JSON.parse(readFileSync('public/manifest.webmanifest','utf8'));expect(manifest.display).toBe('standalone');expect(manifest.icons.some((i:{purpose:string})=>i.purpose==='maskable')).toBe(true);expect(existsSync('public/logo.svg')).toBe(true);});

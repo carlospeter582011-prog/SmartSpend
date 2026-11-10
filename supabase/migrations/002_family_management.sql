@@ -1,0 +1,24 @@
+begin;
+alter table public.transaction_shares add column status text not null default 'paid' check(status in ('planned','paid','canceled'));
+create function public.manage_member(h uuid,target uuid,new_role text) returns void language plpgsql security definer set search_path='' as $$begin
+ perform pg_advisory_xact_lock(hashtextextended(h::text,1));
+ if not public.is_admin(h) then raise exception 'Forbidden';end if;
+ if exists(select 1 from public.household_members where household_id=h and user_id=target and role='admin') and new_role<>'admin' and (select count(*) from public.household_members where household_id=h and role='admin')<=1 then raise exception 'Last admin cannot be removed';end if;
+ if new_role='remove' then delete from public.household_members where household_id=h and user_id=target;
+ elsif new_role in ('admin','adult','child','guest') then update public.household_members set role=new_role where household_id=h and user_id=target;
+ else raise exception 'Invalid role';end if;
+end$$;
+revoke execute on function public.manage_member(uuid,uuid,text) from public,anon;
+grant execute on function public.manage_member(uuid,uuid,text) to authenticated;
+create table public.household_budgets(id uuid primary key default gen_random_uuid(),household_id uuid not null references public.households on delete cascade,title text not null check(length(title) between 1 and 140),amount bigint not null check(amount between 0 and 9007199254740991),currency text not null check(currency ~ '^[A-Z]{3}$'),month date not null);
+alter table public.household_budgets enable row level security;
+create policy budget_read on public.household_budgets for select to authenticated using(public.is_member(household_id));
+create policy budget_manage on public.household_budgets for all to authenticated using(public.is_admin(household_id)) with check(public.is_admin(household_id));
+create table public.shared_bill_assignments(record_id uuid not null,household_id uuid not null,assignee uuid not null references auth.users on delete cascade,status text not null default 'planned' check(status in ('planned','paid','canceled')),primary key(record_id,household_id),foreign key(record_id,household_id) references public.transaction_shares(record_id,household_id) on delete cascade,foreign key(household_id,assignee) references public.household_members(household_id,user_id) on delete cascade);
+alter table public.shared_bill_assignments enable row level security;
+create policy assignment_read on public.shared_bill_assignments for select to authenticated using(public.is_member(household_id));
+create policy assignment_create on public.shared_bill_assignments for insert to authenticated with check(public.is_admin(household_id) and exists(select 1 from public.transaction_shares s where s.record_id=shared_bill_assignments.record_id and s.household_id=shared_bill_assignments.household_id and s.kind='bill'));
+create policy assignment_update on public.shared_bill_assignments for update to authenticated using(public.is_member(household_id) and (assignee=auth.uid() or public.is_admin(household_id))) with check(public.is_member(household_id) and (assignee=auth.uid() or public.is_admin(household_id)));
+revoke update on public.shared_bill_assignments from authenticated;
+grant update(status) on public.shared_bill_assignments to authenticated;
+commit;

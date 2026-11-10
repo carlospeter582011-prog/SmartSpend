@@ -1,0 +1,2 @@
+import type {SupabaseClient} from '@supabase/supabase-js';
+export async function readAllRecords(client:SupabaseClient,owner:string){const rows:{payload:unknown}[]=[];for(let start=0;start<50000;start+=500){const {data,error}=await client.from('records').select('payload').eq('owner_id',owner).order('id').range(start,start+499);if(error)throw Error('Could not refresh records');rows.push(...data);if(data.length<500)return rows;}throw Error('Record limit reached; export and contact support before continuing.');}

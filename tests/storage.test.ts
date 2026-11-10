@@ -1,0 +1,10 @@
+import 'fake-indexeddb/auto';
+import {it,expect,afterEach} from 'vitest';
+import {db,saveRecord,resolveConflict,clearUser,restore} from '../src/storage';
+import {demoRecords} from '../src/demo';
+afterEach(async()=>{await db.records.clear();await db.queue.clear();});
+it('coalesces offline mutations and preserves server base version',async()=>{const r={...demoRecords()[0],version:4};await db.records.put(r);await saveRecord({...r,title:'first'});await saveRecord({...r,title:'second'});expect(await db.queue.count()).toBe(1);expect((await db.queue.get(r.id))?.base_version).toBe(4);});
+it('rejects owner mismatch',async()=>{const r=demoRecords()[0];await saveRecord(r);await expect(saveRecord({...r,owner_id:'other'})).rejects.toThrow();});
+it('keeps both conflict copies until explicit resolution',async()=>{const r=demoRecords()[0];await saveRecord(r);await db.queue.update(r.id,{conflict:{...r,version:2,title:'cloud'}});const q=(await db.queue.get(r.id))!;await resolveConflict(q,'local');expect((await db.records.get(r.id))?.title).toBe(r.title);expect((await db.queue.get(r.id))?.base_version).toBe(2);});
+it('clears one user without clearing another',async()=>{const a=demoRecords()[0],b={...demoRecords()[1],owner_id:'other'};await saveRecord(a);await saveRecord(b);await clearUser('demo');expect(await db.records.count()).toBe(1);expect((await db.records.get(b.id))?.owner_id).toBe('other');});
+it('rejects backups from other accounts before writing',async()=>{await expect(restore('other',JSON.stringify({format:'smartspend-v1',records:demoRecords()}))).rejects.toThrow();expect(await db.records.count()).toBe(0);});
