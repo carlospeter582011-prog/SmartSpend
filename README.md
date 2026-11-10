@@ -12,7 +12,7 @@ Node 24: `npm ci`, `npm run dev`. `npm run typecheck`, `npm run lint`, `npm test
 
 ## Phone-only deployment
 
-1. Create a private GitHub repository **SmartSpend** at https://github.com/new. Initialize a README so a default branch exists. Grant the connected GitHub app access. An agent can upload this source using the connector; the present connector has no create-repository capability.
+1. Open the existing **SmartSpend** GitHub repository. The owner created it as public; it contains source and fictional demo data only. The source is now uploaded at https://github.com/carlospeter582011-prog/SmartSpend; use that repository.
 2. In https://supabase.com/dashboard create a project. Use SQL Editor to apply `supabase/migrations/001_smartspend.sql` in a fresh project. Review before applying to existing databases. Apply migrations 002, 003 and 004 in order, too.
 3. Configure Auth Site URL and allowed redirect URLs for the eventual Vercel domain. Keep email confirmation enabled; disabling it reduces proof of email ownership and is a separate deliberate admin decision. Configure SMTP, captcha and auth rate limits in Supabase before release. Username uniqueness is enforced case-insensitively in Postgres. Recovery redirects back to Settings after Supabase emits PASSWORD_RECOVERY.
 4. Import the repository at https://vercel.com/new with Vite preset. Build `npm run build`, output `dist`. Add environment variables from `.env.example` using Vercel Settings, never chat or GitHub source.
@@ -45,3 +45,5 @@ Automatic recurrence/payment is deliberately absent. Users generate planned inst
 ## Release evidence
 
 See `continue.md`. Do not equate a passing build or demo with verified cloud authentication, authorization, synchronization, installability or production deployment.
+
+The CI database job uses disposable PostgreSQL 16 with a minimal auth.uid/role compatibility fixture. It validates migration execution and SQL permission cases without real account data. It does not replace live Supabase Auth, PostgREST, signup/recovery, session or multi-device tests. `supabase/tests/bootstrap.sql` must never be run against an existing Supabase project.

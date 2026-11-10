@@ -21,3 +21,35 @@ jobs:
         with:
           name: viewport-evidence
           path: test-results/
+  database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: disposable-ci-only
+          POSTGRES_DB: smartspend_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: disposable-ci-only
+      PGDATABASE: smartspend_test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bootstrap isolated auth fixture
+        run: psql -v ON_ERROR_STOP=1 -f supabase/tests/bootstrap.sql
+      - name: Apply schema in migration order
+        run: |
+          for migration in supabase/migrations/*.sql; do
+            psql -v ON_ERROR_STOP=1 -f "$migration"
+          done
+      - name: Verify ownership, child privacy, invite replay and authorization
+        run: psql -v ON_ERROR_STOP=1 -f supabase/tests/permissions.sql

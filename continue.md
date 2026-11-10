@@ -61,3 +61,7 @@ Local asset/schema tests passed. Update this handoff only when results or blocke
 ## Notion synchronization
 
 Three verified foundation tasks checked in place: official AI documentation/fallback research; TypeScript/design/routing/error/test/CI/README scaffold; original SVG/PWA icon assets. All other checkboxes remain unchecked. Implementation handoff appended to the original specification page with blockers, passed tests and explicitly unsuccessful browser verification.
+
+## Database verification expansion
+
+Added an isolated PostgreSQL 16 CI job and minimal auth.uid/role fixture (`supabase/tests/bootstrap.sql`). This fixture must NEVER run in an existing Supabase project. Expanded SQL tests cover domain-view RLS, owner-only private rows, explicitly shared snapshots, stale-write conflict/idempotent replay, expired/revoked/single-use invites, child privilege escalation, direct mutation bypass and anonymous quota access. Execution is pending in the next CI run; no database success claimed yet.
