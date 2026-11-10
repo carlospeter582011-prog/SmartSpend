@@ -47,3 +47,9 @@ Automatic recurrence/payment is deliberately absent. Users generate planned inst
 See `continue.md`. Do not equate a passing build or demo with verified cloud authentication, authorization, synchronization, installability or production deployment.
 
 The CI database job uses disposable PostgreSQL 16 with a minimal auth.uid/role compatibility fixture. It validates migration execution and SQL permission cases without real account data. It does not replace live Supabase Auth, PostgREST, signup/recovery, session or multi-device tests. `supabase/tests/bootstrap.sql` must never be run against an existing Supabase project.
+
+## Multiple Google keys
+
+In Vercel Production, set server-only `GEMINI_API_KEYS` to a JSON array of your keys. Do not put keys in source, chat, or a VITE-prefixed variable. The plural variable overrides `GEMINI_API_KEY`. Maximum eight unique keys; one is randomly selected per uncached request. `GEMINI_MODELS` accepts one or two comma-separated model IDs, tried in order using the selected key. Provider 429 stops attempts and activates a shared cooldown; key pooling cannot increase per-project quota. Keep AI_ENABLED=false until configuration and live behavior are verified. No Google keys are currently provided by this repository.
+
+The production domain was changed by the owner to https://smartspend-save.vercel.app . APP_ORIGIN now points there. Supabase Auth Site URL and root/recovery redirects must also point to that domain.
