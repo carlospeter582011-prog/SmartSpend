@@ -1,0 +1,29 @@
+name: Record live SmartSpend demo
+on:
+  push:
+    branches: [hackathon-demo-recording-20261111]
+    paths:
+      - scripts/record-demo.mjs
+      - .github/workflows/record-demo.yml
+permissions:
+  contents: read
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Record live website in a fresh anonymous demo context
+        run: node scripts/record-demo.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smartspend-desktop-recording
+          path: demo-recording/
+          retention-days: 14
