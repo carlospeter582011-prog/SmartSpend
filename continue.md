@@ -79,3 +79,17 @@ Next concrete action: owner approves the Vercel team-access consent link; then i
 ## Phone-only initial SQL setup
 
 Added `supabase/setup.sql`, combining migrations 001–004 in order inside a single atomic transaction for a NEW EMPTY project. Run once, or use individual migrations, never both. Existing Supabase auth schema is reused; the test bootstrap fixture must never run on Supabase. Added a CI step applying the combined file to a second empty PostgreSQL database and rerunning permissions.sql. Combined-script test PASSED in database job 129888159150, CI run 42833134001, on commit d5155967f8c82df71b8f1af017187702f3f9752d. It applied setup.sql to a second empty PostgreSQL database and reran permissions.sql successfully. Live Supabase setup remains pending. No credentials were added.
+
+## Latest live Supabase milestone
+
+Owner selected organization carlospeter582011 (peewsemzujtchyspvreu). Quoted project cost: $0/month. Created SmartSpend project `uhqunznswmedvoplngop` in eu-central-1; status ACTIVE_HEALTHY. API URL: https://uhqunznswmedvoplngop.supabase.co . Dashboard: https://supabase.com/dashboard/project/uhqunznswmedvoplngop .
+
+Inspected public schema (empty), applied the verified combined schema as migration smartspend_initial_schema, then applied restrict_membership_helpers (source migration 005). Supabase live SQL permission fixture PASSED before and after hardening; rollback confirmed zero fixture auth users and all 11 app tables empty with RLS enabled. Anonymous execution of is_member/is_admin/consume_quota is false. No test bootstrap was applied to Supabase and no real financial data was inserted.
+
+Security advisor anonymous-definer warnings were fixed. Remaining notices are intentional: rate_buckets has RLS with no client policies and privileges revoked; seven authenticated SECURITY DEFINER RPCs exist for guarded app operations and require continued security review alongside live auth integration. References: https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy and https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable . Do not describe the advisor as warning-free.
+
+Configured six production Vercel env entries without printing or committing key values: VITE_SUPABASE_URL, SUPABASE_URL, VITE_SUPABASE_ANON_KEY, SUPABASE_ANON_KEY, APP_ORIGIN, AI_ENABLED=false. Publishable key selected from supported Supabase connector; all public config writes verified by env-name metadata. Existing production deployment has NOT been redeployed with partial configuration.
+
+Blockers: Supabase connector exposes only publishable keys, not backend secret keys. Owner must place the project's Secret key directly in Vercel SUPABASE_SERVICE_ROLE_KEY; never request it in chat. Supabase Auth Site URL/redirect settings also require Dashboard configuration (tool lacks Auth configuration capability). Set site https://smartspend-gamma.vercel.app with root and /?recovery=1 redirects. Optional Google GEMINI_API_KEY remains owner-entered; AI stays disabled until tested.
+
+Source migration 005, updated initial setup.sql and this handoff are kept on branch supabase-provisioning-20261110 so that production does not auto-deploy with incomplete credentials. After the owner completes server/auth configuration: verify CI, merge branch, redeploy and test actual signup/login/recovery/session, sync and family flows. Live SQL policies passing does not mean end-to-end Auth is verified.

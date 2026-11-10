@@ -125,5 +125,11 @@ end$$;
 revoke all on function public.consume_quota(text,int,int) from public,anon,authenticated;
 grant execute on function public.consume_quota(text,int,int) to service_role;
 
-COMMIT;
 
+-- Source migration: 005_restrict_membership_helpers.sql
+-- Restrict membership helpers to signed-in callers and keep quota storage server-only.
+revoke execute on function public.is_member(uuid), public.is_admin(uuid) from public, anon;
+grant execute on function public.is_member(uuid), public.is_admin(uuid) to authenticated, service_role;
+revoke all on public.rate_buckets from anon, authenticated;
+
+COMMIT;
