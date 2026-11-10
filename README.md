@@ -68,3 +68,8 @@ Production AI was enabled and all three configured Google credentials passed a s
 ### Readable AI insights and budget chat
 
 Assistant now renders readable summaries/steps instead of JSON and supports free questions plus follow-ups based on current synchronized personal financial data. Example chips only prefill text. Sign in, sync records and explicitly consent to the chat context before sending. Conversation is held only in page memory. The gateway excludes expense/income titles/private notes and account identity; selected financial labels and the user's own question are included under chat consent. Budgeting-only, no action tools. Visible waiting, cancellation, timeout, quota countdown and retained drafts cover errors. See docs/GOOGLE_AI.md and continue.md for verified scope and limits.
+
+
+### Unified temporary Assistant (2026-11-11)
+
+Assistant is now one full-page conversation with an anchored composer. Budget analysis, insights and purchase questions use that same chat; the separate analysis form and Insights panel were removed. Existing recorded calculations remain available in an expandable disclosure inside the chat empty state. There is no Google consent checkbox: pressing Send explicitly requests AI. No provider call happens just from opening Assistant. Privacy details remain in Settings. Conversation stays only in memory across app-section navigation; closing/reloading/pagehide, New chat, logout or account/currency/language change clears it. This ends the chat, not the authenticated account session. No chat history is stored server-side or in browser storage. Sending still requires a real account, connectivity and synchronized records. Existing quotas and errors remain.
