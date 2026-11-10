@@ -15,6 +15,6 @@ it('shows pending feedback and cancel, then preserves deterministic report on ca
  fireEvent.click(screen.getByRole('button',{name:'Cancel waiting'}));await screen.findByText('Waiting canceled. Your calculated report is available.');expect(screen.getByText(/Only recorded data is included/)).toBeTruthy();
 });
 it('honors server rate limit and prevents a second request during cooldown',async()=>{
- const fetch=vi.fn(async()=>new Response(JSON.stringify({error:'AI rate limit reached',retryAfter:60}),{status:429,headers:{'Content-Type':'application/json','Retry-After':'60'}}));vi.stubGlobal('fetch',fetch);
+ const fetch=vi.fn(async()=>({status:429,ok:false,json:async()=>({error:'AI rate limit reached',retryAfter:60}),headers:{get:()=> '60'}}));vi.stubGlobal('fetch',fetch);
  await start();await screen.findByText(/AI rate limit reached/);const button=await screen.findByRole('button',{name:/Retry in/});expect((button as HTMLButtonElement).disabled).toBe(true);fireEvent.click(button);await waitFor(()=>expect(fetch).toHaveBeenCalledTimes(1));expect(screen.getByText(/Only recorded data is included/)).toBeTruthy();
 });
