@@ -5,7 +5,7 @@ Specification: https://app.notion.com/p/413edc0cac2381328d6ec43d3c8c1737
 
 ## Current state
 
-Specification read in full. Repository now exists: https://github.com/carlospeter582011-prog/SmartSpend (public, created by owner). Remote main was inspected: only `README.md` containing `# SmartSpend`, initial commit `9dafed0ba0a6b5cee37958b3e02755ea7af43400`. No existing implementation to preserve. Initial source upload is being prepared through the GitHub connector. NOT deployed.
+Specification read in full. Repository now exists: https://github.com/carlospeter582011-prog/SmartSpend (public, created by owner). Remote main was inspected: only `README.md` containing `# SmartSpend`, initial commit `9dafed0ba0a6b5cee37958b3e02755ea7af43400`. No existing implementation to preserve. 45 source files uploaded through the GitHub connector in commit `c548d90236243d9c6851e9dd2b6de5999a153916`. Remote tree verified. NOT deployed.
 
 Phase 0 repository inspection is verified. Phase 1 live infrastructure remains blocked by missing Supabase/Vercel environment configuration. Later code is implemented without representing it as verified complete.
 
@@ -29,9 +29,9 @@ Exact source inventory: package.json/package-lock.json, tsconfig.json, vite.conf
 - Production build: passed. Bundle-size warning (~1.09 MB raw entry) remains to improve with code splitting.
 - PWA PNG dimensions 192/512/512 and manifest maskable declaration passed asset tests.
 - Playwright attempted at all eight requested widths. **Browser launch blocked before page checks**, Linux `socket() failed: Operation not permitted`; no viewport results/screenshots were obtained. Vite needed loopback host because 0.0.0.0 network interface enumeration failed in this runtime.
-- Shared cloud browser fallback attempted localhost preview; ERR_CONNECTION_REFUSED. Therefore UI, responsiveness, offline shell and installability are **not verified**. Do not invent screenshots or claim E2E passed.
+- Shared cloud browser fallback attempted localhost preview; ERR_CONNECTION_REFUSED. This local limitation remains, but remote GitHub Actions subsequently ran the browser successfully. See current remote evidence below; offline shell/installability are not yet verified.
 - Supabase permission SQL fixture is provided but NOT RUN. No Supabase URL, keys, project connection or test accounts were supplied.
-- Vercel production: NOT RUN. GitHub Actions will start on the initial source push; inspect the actual run before claiming success.
+- GitHub Actions initial run 42822463127: install, typecheck, lint, 24 unit tests and build passed. Browser E2E: eight viewport tests and keyboard/zoom passed (9/10 total); offline reload failed. Screenshots were downloaded and inspected. Fixed Vary-aware public asset cache lookups, made worker-control readiness explicit, disabled chart animation for stable rendering and applied compact currency formatting to prevent digit splitting. Replacement run required. Vercel remains undeployed: team authorization returned 403; a team-access consent link was supplied to the owner.
 - Gemini: official model listing + structured output inspected; no key, free-tier eligibility/quota or real generation verified. Gateway disabled by default.
 
 ## Blockers and exact requirements
@@ -56,7 +56,7 @@ Exact source inventory: package.json/package-lock.json, tsconfig.json, vite.conf
 
 ## Next actions in order
 
-Local asset/schema tests passed. Update this handoff only when results or blockers change. Upload the inspected source via connector, then inspect CI and fix any failures. Then live database/auth permissions and deployment verification before checking Phase 1 tasks. Work through all remaining Notion phases with evidence; no complete-project declaration until real deployed flows pass.
+Local asset/schema tests passed. Update this handoff only when results or blockers change. Initial source is uploaded. Verify the offline cache fix on GitHub Actions, then update this file with the actual result. Then live database/auth permissions and deployment verification before checking Phase 1 tasks. Work through all remaining Notion phases with evidence; no complete-project declaration until real deployed flows pass.
 
 ## Notion synchronization
 
